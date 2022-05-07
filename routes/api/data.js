@@ -1,26 +1,29 @@
 const express = require("express");
-const members = require("../../Members");
 const tree = require("../../Tree");
-const collection = require("../../Collection");
+const colection = require("../../Colection");
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.json(members);
+router.get("/tree", (req, res) => {
+  res.json(tree);
 });
 
-console.log(tree);
-console.log(collection);
-//get single member
-router.get("/:id", (req, res) => {
-  const found = members.some((member) => member.id === parseInt(req.params.id));
-  found
-    ? res.json(
-        members.filter((member) => member.id === parseInt(req.params.id))
-      )
-    : res
-        .status(400)
-        .json({ msg: `no member with id of ${req.params.id} found!` });
+router.get("/tree/:id", (req, res) => {
+  const filtered = tree.collection.filter((c) => c.id === req.params.id);
+  console.log(filtered);
+  res.json(filtered);
+});
+
+router.get("/colection/", (req, res) => {
+  console.log(colection);
+  res.json(colection);
+});
+
+//get single member this is ok
+router.get("/colection/:id", (req, res) => {
+  const filtered = colection.collection.filter((c) => c.id === req.params.id);
+  console.log(filtered);
+  res.json(filtered);
 });
 
 router.post("/", (req, res) => {
