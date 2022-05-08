@@ -4,10 +4,17 @@ const res = require("express/lib/response");
 const { get } = require("express/lib/response");
 const path = require("path");
 const { getEnvironmentData } = require("worker_threads");
+const cors = require("cors");
 
 const PORT = process.env.PORT || 5000;
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 app.use(express.json());
 app.use(urlencoded({ extended: false }));
