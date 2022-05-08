@@ -18,7 +18,7 @@ function App() {
 
   return (
     <>
-      jedi govna
+      <h3>FE App</h3>
       {data?.map((element) => {
         return (
           <>
