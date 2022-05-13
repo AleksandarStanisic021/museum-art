@@ -20,6 +20,7 @@ function App() {
     };
     getData();
   }, []);
+
   useEffect(() => {
     const getData = async () => {
       const res = await fetch("http://localhost:5000/api/data/tree/20");
@@ -29,6 +30,7 @@ function App() {
     };
     getData();
   }, []);
+
   useEffect(() => {
     const getData = async () => {
       const res = await fetch("http://localhost:5000/api/data/tree/10");
@@ -39,16 +41,20 @@ function App() {
     getData();
   }, []);
 
-  let collectionImages = collectionData?.collection.map((c) => {
+  let collectionImages = collectionData?.collection?.map((c) => {
     return (
-      <div key={c.url}>
-        <img src={`${c.url}`} alt="" />
-      </div>
+      <Box key={c.url} style={{ width: "60%" }}>
+        <img
+          style={{ width: "100%", margin: "20px" }}
+          src={`${c.url}`}
+          alt=""
+        />
+      </Box>
     );
   });
 
   const handleClick = (id) => {
-    console.log(collectionData?.collection);
+    ///setCollection(newCollection);
     console.log(id);
   };
   console.log(collectionData);
@@ -137,21 +143,14 @@ function App() {
               </TreeView>
             );
           })}
-          <Box
-            m={1}
-            style={{
-              backgroundColor: "orange",
-              width: "60%",
-              height: "100vh",
-            }}
+
+          <Paper
+            w={100}
+            elevation={3}
+            style={{ backgroundColor: "#f1f1f1", height: "100vh" }}
           >
-            <Paper
-              elevation={3}
-              style={{ backgroundColor: "#f1f1f1", height: "100vh" }}
-            >
-              <Box width={"40%"}> {collectionImages}</Box>
-            </Paper>
-          </Box>
+            <Box width={"40%"}> {collectionImages}</Box>
+          </Paper>
         </Box>
       </Container>
     </>
