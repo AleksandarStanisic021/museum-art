@@ -2,61 +2,74 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import { Container, Typography, Box, Button } from "@mui/material/";
 import { Paper } from "@mui/material/";
+import { TreeItem, TreeView } from "@material-ui/lab";
 
 function App() {
-  const [data, setData] = useState();
+  const [dataUs, setUsData] = useState();
   const [americanState, setAmericanState] = useState("0");
 
   useEffect(() => {
     const getData = async () => {
-      const res = await fetch("http://localhost:5000/api/data/tree/20");
-      const goted = await res.json();
-      setData(goted);
-      return goted;
+      const res = await fetch("http://localhost:5000/api/data/tree/10");
+      const result = await res.json();
+      setUsData(result);
+      return result;
     };
     getData();
   }, []);
-  console.log(americanState);
+
   return (
     <>
       <Container>
         <Paper elevation={3} style={{ backgroundColor: "#f1f1f1" }}>
           <Typography
-            component={"h1"}
+            component={"h4"}
+            m={1}
             variant={"h4"}
-            style={{ color: "red" }}
+            style={{ color: "gray" }}
             padding={1}
           >
-            FE App
+            Museum Art
           </Typography>
         </Paper>
 
-        {data?.map((element) => {
+        {dataUs?.map((element) => {
           return (
-            <Paper>
-              {/*<Typography>{element.id}</Typography>*/}
-              <Typography element={"h2"} variant={"h5"}>
-                {element.name}
-              </Typography>
-              <Paper>
-                {element.collection?.map((c) => {
-                  return (
-                    <Typography variant={"p"} element={"p"}>
-                      <Box key={Math.random()}>
-                        <b>Name:</b>
-                        <Button onClick={() => setAmericanState(c.id)}>
-                          {c.name}
-                        </Button>
-                      </Box>
-                    </Typography>
-                  );
-                })}
-              </Paper>
-            </Paper>
+            <TreeView
+              aria-label="file system navigator"
+              sx={{
+                height: 240,
+                flexGrow: 1,
+                maxWidth: 100,
+                overflowY: "auto",
+              }}
+            >
+              <TreeItem nodeId="1" label={element.name.toUpperCase()}>
+                <Paper>
+                  {/*<Typography>{element.id}</Typography>*/}
+                  <Paper>
+                    {element.collection?.map((c) => {
+                      return (
+                        <Typography variant={"p"} element={"p"}>
+                          <Box key={Math.random()}>
+                            <Button
+                              style={{ color: "gray" }}
+                              onClick={() => setAmericanState(c.id)}
+                            >
+                              {c.name}
+                            </Button>
+                          </Box>
+                        </Typography>
+                      );
+                    })}
+                  </Paper>
+                </Paper>
+              </TreeItem>
+            </TreeView>
           );
         })}
       </Container>
-      <Box>{americanState}</Box>
+      <Box style={{ backgroundColor: "orange" }}>{americanState}</Box>
     </>
   );
 }
