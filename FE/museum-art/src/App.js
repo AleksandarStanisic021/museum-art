@@ -7,7 +7,9 @@ import { TreeItem, TreeView } from "@material-ui/lab";
 //http://localhost:5000/api/data/colection/
 
 function App() {
-  const [collectionData, setCollection] = useState();
+  const [item, setItem] = useState({});
+  const [itemDefined, setItemDefined] = useState(false);
+  const [collectionData, setCollectionData] = useState({});
   const [dataUs, setUsData] = useState();
   const [euData, setEuData] = useState();
 
@@ -15,7 +17,7 @@ function App() {
     const getData = async () => {
       const res = await fetch("http://localhost:5000/api/data/colection/");
       const result = await res.json();
-      setCollection(result);
+      setCollectionData(result);
       return result;
     };
     getData();
@@ -41,23 +43,48 @@ function App() {
     getData();
   }, []);
 
+  let collectionImage = (item) => {
+    return (
+      <Paper elevation={2} padding="5px">
+        <img
+          style={{ width: "40%", marginLeft: "30%" }}
+          src={`${item?.url}`}
+          alt={`${item.name}`}
+        />
+        <Box p={3}>
+          <Typography fontSize={18}>{item?.description}</Typography>
+        </Box>
+      </Paper>
+    );
+  };
+
   let collectionImages = collectionData?.collection?.map((c) => {
     return (
-      <Box key={c.url} style={{ width: "60%" }}>
-        <img
-          style={{ width: "100%", margin: "20px" }}
-          src={`${c.url}`}
-          alt=""
-        />
-      </Box>
+      <Paper
+        m={1}
+        elevation={3}
+        p={1}
+        key={Math.random()}
+        w={"100%"}
+        style={{ backgroundColor: "#f1f1f1" }}
+      >
+        <img style={{ width: "40%", margin: "20px" }} src={`${c.url}`} alt="" />
+        <Box p={1}>{c.description}</Box>
+      </Paper>
     );
   });
 
   const handleClick = (id) => {
-    ///setCollection(newCollection);
-    console.log(id);
+    setItemDefined(true);
+    const ID = parseInt(id);
+    collectionData?.collection.filter((i) => {
+      if (ID == i.id) {
+        setItem(i);
+        return {};
+      }
+    });
   };
-  console.log(collectionData);
+  console.log(collectionImages);
   return (
     <>
       <Container h={100}>
@@ -90,7 +117,11 @@ function App() {
                     <Paper>
                       {element.collection?.map((c) => {
                         return (
-                          <Typography variant={"p"} element={"p"}>
+                          <Typography
+                            key={Math.random()}
+                            variant={"p"}
+                            element={"p"}
+                          >
                             <Box key={Math.random()}>
                               <Button
                                 style={{ color: "gray" }}
@@ -143,14 +174,14 @@ function App() {
               </TreeView>
             );
           })}
-
-          <Paper
-            w={100}
-            elevation={3}
-            style={{ backgroundColor: "#f1f1f1", height: "100vh" }}
-          >
-            <Box width={"40%"}> {collectionImages}</Box>
-          </Paper>
+          <Box width={"40%"} marginLeft={5}>
+            {" "}
+            {itemDefined ? (
+              collectionImage(item)
+            ) : (
+              <Typography>No item selected!</Typography>
+            )}
+          </Box>
         </Box>
       </Container>
     </>
