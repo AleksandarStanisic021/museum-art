@@ -1,12 +1,15 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-import { Container, Typography, Box, Button } from "@mui/material/";
+import { Container, Typography, Box, Button, Input } from "@mui/material/";
 import { Paper } from "@mui/material/";
 import { TreeItem, TreeView } from "@material-ui/lab";
 
 //http://localhost:5000/api/data/colection/
 
 function App() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [show, setShow] = useState(false);
+  const [searchData, setSearchData] = useState([]);
   const [item, setItem] = useState({});
   const [itemDefined, setItemDefined] = useState(false);
   const [collectionData, setCollectionData] = useState({});
@@ -68,13 +71,18 @@ function App() {
         w={"100%"}
         style={{ backgroundColor: "#f1f1f1" }}
       >
-        <img style={{ width: "40%", margin: "20px" }} src={`${c.url}`} alt="" />
+        <img
+          style={{ background: "img", margin: "20px" }}
+          src={`${c.url}`}
+          alt=""
+        />
         <Box p={1}>{c.description}</Box>
       </Paper>
     );
   });
 
-  const handleClick = (id) => {
+  const handleShowImage = (id) => {
+    setShow(true);
     setItemDefined(true);
     const ID = parseInt(id);
     collectionData?.collection.filter((i) => {
@@ -84,7 +92,20 @@ function App() {
       }
     });
   };
-  console.log(collectionImages);
+
+  const handleForm = (e) => {
+    e.preventDefault();
+    const { collection } = collectionData;
+    console.log("kolekcija je :", collection);
+
+    const filteredData = collection.filter((c) =>
+      c?.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setShow(false);
+    setSearchData(filteredData);
+    setSearchTerm("");
+  };
+
   return (
     <>
       <Container h={100}>
@@ -99,6 +120,16 @@ function App() {
             Museum Art
           </Typography>
         </Paper>
+        <form onSubmit={(e) => handleForm(e)}>
+          <Input
+            type="text"
+            name="search"
+            id="search"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </form>
         <Box m={1} style={{ display: "flex" }}>
           {dataUs?.map((element) => {
             return (
@@ -125,7 +156,7 @@ function App() {
                             <Box key={Math.random()}>
                               <Button
                                 style={{ color: "gray" }}
-                                onClick={() => handleClick(c.id)}
+                                onClick={() => handleShowImage(c.id)}
                               >
                                 {c.name}
                               </Button>
@@ -160,7 +191,7 @@ function App() {
                             <Box key={Math.random()}>
                               <Button
                                 style={{ color: "gray" }}
-                                onClick={() => handleClick(c.id)}
+                                onClick={() => handleShowImage(c.id)}
                               >
                                 {c.name}
                               </Button>
@@ -174,14 +205,36 @@ function App() {
               </TreeView>
             );
           })}
-          <Box width={"40%"} marginLeft={5}>
-            {" "}
-            {itemDefined ? (
-              collectionImage(item)
-            ) : (
-              <Typography>No item selected!</Typography>
-            )}
-          </Box>
+
+          {show ? (
+            <Box width={"40%"} marginLeft={1}>
+              {itemDefined ? (
+                collectionImage(item)
+              ) : (
+                <Typography>No item selected!</Typography>
+              )}
+            </Box>
+          ) : (
+            <Box ml={4} width={"60%"}>
+              {searchData.map((img) => (
+                <Paper elevation={3} width={"10%"} p={1}>
+                  <Typography variant="h6" element="p" pl={1}>
+                    {img.name}
+                  </Typography>
+                  <img
+                    style={{ width: "40%", padding: "10px" }}
+                    src={`${img?.url}`}
+                    alt={img.name}
+                  ></img>
+                  <Box p={2}>
+                    <Typography element={"xs"} variant={"xs"}>
+                      {img.description}
+                    </Typography>
+                  </Box>
+                </Paper>
+              ))}
+            </Box>
+          )}
         </Box>
       </Container>
     </>
