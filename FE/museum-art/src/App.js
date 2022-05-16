@@ -1,12 +1,13 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 import { Container, Typography, Box, Button, Input } from "@mui/material/";
-import { Paper } from "@mui/material/";
+import { Paper, Radio, RadioGroup, FormControlLabel } from "@mui/material/";
 import { TreeItem, TreeView } from "@material-ui/lab";
 
 //http://localhost:5000/api/data/colection/
 
 function App() {
+  const [radio, setRadio] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [show, setShow] = useState(false);
   const [searchData, setSearchData] = useState([]);
@@ -48,12 +49,15 @@ function App() {
 
   let collectionImage = (item) => {
     return (
-      <Paper elevation={2} padding="5px">
+      <Paper elevation={3} padding="5px">
         <img
-          style={{ width: "40%", marginLeft: "30%" }}
+          style={{ width: "40%", marginLeft: "20%", marginTop: "10px" }}
           src={`${item?.url}`}
           alt={`${item.name}`}
         />
+        <Typography variant="h6" element="p" pl={1}>
+          {item.name}
+        </Typography>
         <Box p={3}>
           <Typography fontSize={18}>{item?.description}</Typography>
         </Box>
@@ -96,16 +100,28 @@ function App() {
   const handleForm = (e) => {
     e.preventDefault();
     const { collection } = collectionData;
-    console.log("kolekcija je :", collection);
 
-    const filteredData = collection.filter((c) =>
-      c?.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredData = () => {
+      if (radio === "all") {
+        return collection.filter((c) =>
+          c?.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      } else if (radio === "potery" || radio === "painting") {
+        return collection.filter((c) => {
+          return (
+            c?.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+            c?.type === radio
+          );
+        });
+      }
+    };
+    const data = filteredData();
     setShow(false);
-    setSearchData(filteredData);
+    console.log("data je", data);
+    setSearchData(data);
     setSearchTerm("");
   };
-
+  console.log(radio);
   return (
     <>
       <Container h={100}>
@@ -121,6 +137,26 @@ function App() {
           </Typography>
         </Paper>
         <form onSubmit={(e) => handleForm(e)}>
+          <Box m={2}>
+            <RadioGroup
+              row
+              value={radio}
+              onChange={(e) => setRadio(e.target.value)}
+            >
+              <FormControlLabel control={<Radio />} value="all" label="all" />
+              <FormControlLabel
+                control={<Radio />}
+                value="potery"
+                label="potery"
+              />
+              <FormControlLabel
+                control={<Radio />}
+                value="painting"
+                label="painting"
+              />
+            </RadioGroup>
+          </Box>
+
           <Input
             type="text"
             name="search"
@@ -216,16 +252,16 @@ function App() {
             </Box>
           ) : (
             <Box ml={4} width={"60%"}>
-              {searchData.map((img) => (
+              {searchData?.map((img) => (
                 <Paper elevation={3} width={"10%"} p={1}>
-                  <Typography variant="h6" element="p" pl={1}>
-                    {img.name}
-                  </Typography>
                   <img
                     style={{ width: "40%", padding: "10px" }}
                     src={`${img?.url}`}
                     alt={img.name}
                   ></img>
+                  <Typography variant="h6" element="p" pl={1}>
+                    {img.name}
+                  </Typography>
                   <Box p={2}>
                     <Typography element={"xs"} variant={"xs"}>
                       {img.description}
