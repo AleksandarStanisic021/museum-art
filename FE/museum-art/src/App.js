@@ -1,13 +1,15 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-import { Container, Typography, Box, Button, Input } from "@mui/material/";
-import { Paper, Radio, RadioGroup, FormControlLabel } from "@mui/material/";
-import { TreeItem, TreeView } from "@material-ui/lab";
+import { Container, Typography, Box, Input } from "@mui/material/";
+import { Paper } from "@mui/material/";
+import { TreeComponent } from "./components/TreeComponent";
+import ImageComponent from "./components/ImageComponent";
+import FormComponent from "./components/FormComponent";
 
 //http://localhost:5000/api/data/colection/
 
 function App() {
-  const [radio, setRadio] = useState("");
+  const [radio, setRadio] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [show, setShow] = useState(false);
   const [searchData, setSearchData] = useState([]);
@@ -49,41 +51,11 @@ function App() {
 
   let collectionImage = (item) => {
     return (
-      <Paper elevation={3} padding="5px">
-        <img
-          style={{ width: "40%", marginLeft: "20%", marginTop: "10px" }}
-          src={`${item?.url}`}
-          alt={`${item.name}`}
-        />
-        <Typography variant="h6" element="p" pl={1}>
-          {item.name}
-        </Typography>
-        <Box p={3}>
-          <Typography fontSize={18}>{item?.description}</Typography>
-        </Box>
-      </Paper>
+      <Box ml={5} width="100%">
+        <ImageComponent item={item} />
+      </Box>
     );
   };
-
-  let collectionImages = collectionData?.collection?.map((c) => {
-    return (
-      <Paper
-        m={1}
-        elevation={3}
-        p={1}
-        key={Math.random()}
-        w={"100%"}
-        style={{ backgroundColor: "#f1f1f1" }}
-      >
-        <img
-          style={{ background: "img", margin: "20px" }}
-          src={`${c.url}`}
-          alt=""
-        />
-        <Box p={1}>{c.description}</Box>
-      </Paper>
-    );
-  });
 
   const handleShowImage = (id) => {
     setShow(true);
@@ -103,25 +75,24 @@ function App() {
 
     const filteredData = () => {
       if (radio === "all") {
-        return collection.filter((c) =>
-          c?.name.toLowerCase().includes(searchTerm.toLowerCase())
+        return collection.filter((col) =>
+          col?.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
       } else if (radio === "potery" || radio === "painting") {
-        return collection.filter((c) => {
+        return collection.filter((col) => {
           return (
-            c?.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-            c?.type === radio
+            col?.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+            col?.type === radio
           );
         });
       }
     };
     const data = filteredData();
     setShow(false);
-    console.log("data je", data);
     setSearchData(data);
     setSearchTerm("");
   };
-  console.log(radio);
+
   return (
     <>
       <Container h={100}>
@@ -136,114 +107,33 @@ function App() {
             Museum Art
           </Typography>
         </Paper>
-        <form onSubmit={(e) => handleForm(e)}>
-          <Box m={2}>
-            <RadioGroup
-              row
-              value={radio}
-              onChange={(e) => setRadio(e.target.value)}
-            >
-              <FormControlLabel control={<Radio />} value="all" label="all" />
-              <FormControlLabel
-                control={<Radio />}
-                value="potery"
-                label="potery"
-              />
-              <FormControlLabel
-                control={<Radio />}
-                value="painting"
-                label="painting"
-              />
-            </RadioGroup>
-          </Box>
-
-          <Input
-            type="text"
-            name="search"
-            id="search"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </form>
+        <FormComponent
+          radio={radio}
+          setRadio={setRadio}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          handleForm={handleForm}
+        />
         <Box m={1} style={{ display: "flex" }}>
           {dataUs?.map((element) => {
             return (
-              <TreeView
-                aria-label="file system navigator"
-                sx={{
-                  height: 240,
-                  flexGrow: 1,
-                  maxWidth: 100,
-                  overflowY: "auto",
-                }}
-              >
-                <TreeItem nodeId="1" label={element.name.toUpperCase()}>
-                  <Paper>
-                    {/*<Typography>{element.id}</Typography>*/}
-                    <Paper>
-                      {element.collection?.map((c) => {
-                        return (
-                          <Typography
-                            key={Math.random()}
-                            variant={"p"}
-                            element={"p"}
-                          >
-                            <Box key={Math.random()}>
-                              <Button
-                                style={{ color: "gray" }}
-                                onClick={() => handleShowImage(c.id)}
-                              >
-                                {c.name}
-                              </Button>
-                            </Box>
-                          </Typography>
-                        );
-                      })}
-                    </Paper>
-                  </Paper>
-                </TreeItem>
-              </TreeView>
+              <TreeComponent
+                element={element}
+                handleShowImage={handleShowImage}
+              />
             );
           })}
           {euData?.map((element) => {
             return (
-              <TreeView
-                aria-label="file system navigator"
-                sx={{
-                  height: 240,
-                  flexGrow: 1,
-                  maxWidth: 100,
-                  overflowY: "auto",
-                }}
-              >
-                <TreeItem nodeId="1" label={element.name.toUpperCase()}>
-                  <Paper>
-                    {/*<Typography>{element.id}</Typography>*/}
-                    <Paper>
-                      {element.collection?.map((c) => {
-                        return (
-                          <Typography variant={"p"} element={"p"}>
-                            <Box key={Math.random()}>
-                              <Button
-                                style={{ color: "gray" }}
-                                onClick={() => handleShowImage(c.id)}
-                              >
-                                {c.name}
-                              </Button>
-                            </Box>
-                          </Typography>
-                        );
-                      })}
-                    </Paper>
-                  </Paper>
-                </TreeItem>
-              </TreeView>
+              <TreeComponent
+                element={element}
+                handleShowImage={handleShowImage}
+              />
             );
           })}
 
           {show ? (
-            <Box width={"40%"} marginLeft={1}>
+            <Box width={"60%"} marginLeft={1}>
               {itemDefined ? (
                 collectionImage(item)
               ) : (
@@ -251,23 +141,9 @@ function App() {
               )}
             </Box>
           ) : (
-            <Box ml={4} width={"60%"}>
-              {searchData?.map((img) => (
-                <Paper elevation={3} width={"10%"} p={1}>
-                  <img
-                    style={{ width: "40%", padding: "10px" }}
-                    src={`${img?.url}`}
-                    alt={img.name}
-                  ></img>
-                  <Typography variant="h6" element="p" pl={1}>
-                    {img.name}
-                  </Typography>
-                  <Box p={2}>
-                    <Typography element={"xs"} variant={"xs"}>
-                      {img.description}
-                    </Typography>
-                  </Box>
-                </Paper>
+            <Box ml={5} width={"60%"}>
+              {searchData?.map((item) => (
+                <ImageComponent item={item} />
               ))}
             </Box>
           )}
