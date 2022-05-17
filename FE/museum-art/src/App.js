@@ -20,33 +20,33 @@ function App() {
   const [euData, setEuData] = useState();
 
   useEffect(() => {
-    const getData = async () => {
+    const getCollectionById = async () => {
       const res = await fetch("http://localhost:5000/api/data/colection/");
       const result = await res.json();
       setCollectionData(result);
       return result;
     };
-    getData();
+    getCollectionById();
   }, []);
 
   useEffect(() => {
-    const getData = async () => {
+    const getCollection = async () => {
       const res = await fetch("http://localhost:5000/api/data/tree/20");
       const result = await res.json();
       setEuData(result);
       return result;
     };
-    getData();
+    getCollection();
   }, []);
 
   useEffect(() => {
-    const getData = async () => {
+    const getCollection = async () => {
       const res = await fetch("http://localhost:5000/api/data/tree/10");
       const result = await res.json();
       setUsData(result);
       return result;
     };
-    getData();
+    getCollection();
   }, []);
 
   let collectionImage = (item) => {
