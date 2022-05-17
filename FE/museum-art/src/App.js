@@ -5,15 +5,16 @@ import { Paper } from "@mui/material/";
 import { TreeComponent } from "./components/TreeComponent";
 import ImageComponent from "./components/ImageComponent";
 import FormComponent from "./components/FormComponent";
+import HeaderComponent from "./components/HeaderComponent";
 
-//http://localhost:5000/api/data/colection/
+
 
 function App() {
   const [radio, setRadio] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [show, setShow] = useState(false);
   const [searchData, setSearchData] = useState([]);
-  const [item, setItem] = useState({});
+  const [itemImage, setItemImage] = useState({});
   const [itemDefined, setItemDefined] = useState(false);
   const [collectionData, setCollectionData] = useState({});
   const [dataUs, setUsData] = useState();
@@ -49,10 +50,10 @@ function App() {
     getCollection();
   }, []);
 
-  let collectionImage = (item) => {
+  let collectionImage = (itemImage) => {
     return (
       <Box ml={5} width="100%">
-        <ImageComponent item={item} />
+        <ImageComponent item={itemImage} />
       </Box>
     );
   };
@@ -63,7 +64,7 @@ function App() {
     const ID = parseInt(id);
     collectionData?.collection.filter((i) => {
       if (ID == i.id) {
-        setItem(i);
+        setItemImage(i);
         return {};
       }
     });
@@ -96,17 +97,7 @@ function App() {
   return (
     <>
       <Container h={100}>
-        <Paper elevation={3} style={{ backgroundColor: "#f1f1f1" }}>
-          <Typography
-            component={"h5"}
-            m={1}
-            variant={"h5"}
-            style={{ color: "gray" }}
-            padding={1}
-          >
-            Museum Art
-          </Typography>
-        </Paper>
+        <HeaderComponent />
         <FormComponent
           radio={radio}
           setRadio={setRadio}
@@ -135,7 +126,7 @@ function App() {
           {show ? (
             <Box width={"60%"} marginLeft={1}>
               {itemDefined ? (
-                collectionImage(item)
+                collectionImage(itemImage)
               ) : (
                 <Typography>No item selected!</Typography>
               )}
